@@ -1,0 +1,10 @@
+pytest>=2.7.2
+# bug fix: a dependency of pytest-pep8 require setuptools-scm,
+# in the case that pip could not properly handle in offline environment.
+setuptools-scm
+wheel
+pytest-flake8
+pytest-cov
+pytest-mock
+pytest-travis-fold
+coveralls
