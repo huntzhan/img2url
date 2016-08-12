@@ -32,6 +32,7 @@ def generate_apienv(path, config):
 def headers(config):
     return {
         'Authorization': 'token {token}'.format(**config),
+        'Content-Type': 'application/json; charset=utf-8',
     }
 
 
@@ -65,6 +66,15 @@ def assert_status_code(rep, code):
         raise RuntimeError('FATAL on making request')
 
 
+def _to_binary(body):
+    from requests.compat import json as complexjson
+    data = complexjson.dumps(body)
+    if not isinstance(data, bytes):
+        return data.encode('utf-8')
+    else:
+        return data
+
+
 # return [(filename, sha), ...]
 def list_repo(config):
     # https://developer.github.com/v3/repos/contents/#response-if-content-is-a-directory
@@ -86,14 +96,7 @@ def list_repo(config):
     return files
 
 
-# if pre_sha is None, create file.
-# otherwise, update file.
-def create_or_update_file(path, config, pre_sha=None):
-    apienv = generate_apienv(path, config)
-
-    apiurl = API_TEMPLATE.format(
-        '/repos/{user}/{repo}/contents/{filename}'.format(**apienv),
-    )
+def _prepare_body(apienv, pre_sha):
 
     message_template = (
         apienv['message_template_create']
@@ -111,7 +114,24 @@ def create_or_update_file(path, config, pre_sha=None):
     if pre_sha:
         body['sha'] = pre_sha
 
-    rep = requests.put(apiurl, json=body, **requests_kwargs(config))
+    return body
+
+
+# if pre_sha is None, create file.
+# otherwise, update file.
+def create_or_update_file(path, config, pre_sha=None):
+    apienv = generate_apienv(path, config)
+
+    apiurl = API_TEMPLATE.format(
+        '/repos/{user}/{repo}/contents/{filename}'.format(**apienv),
+    )
+    body = _prepare_body(apienv, pre_sha)
+
+    rep = requests.put(
+        apiurl,
+        json=body,
+        **requests_kwargs(config)
+    )
     return rep
 
 
