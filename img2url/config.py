@@ -14,7 +14,7 @@ from img2url.metadata import AUTHORS, EMAILS
 
 
 ENV_CONFIG_PATH = 'IMG2URL_CONFIG_PATH'
-DEFAULT_CONFIG_PATH = '~/.img2url.conf'
+DEFAULT_CONFIG_PATH = '~/.img2url.yml'
 
 
 CONFIG_TOKEN = 'token'

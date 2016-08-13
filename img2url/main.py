@@ -25,7 +25,7 @@ Options:
 def translate_url(filename, url, doc_type):
     TEMPLATES = {
         'original': '{url}',
-        'markdown': '[!{filename}]({url})',
+        'markdown': '![{filename}]({url})',
     }
     return TEMPLATES[doc_type].format(filename=filename, url=url)
 
