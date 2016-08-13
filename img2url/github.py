@@ -56,7 +56,7 @@ def requests_kwargs(config):
 
 def gitsha(data):
     m = hashlib.sha1()
-    for arg in [b'blob %s\0' % len(data), data]:
+    for arg in [b'blob ' + str(len(data)).encode('ascii') + b'\0', data]:
         m.update(arg)
     return m.hexdigest()
 
