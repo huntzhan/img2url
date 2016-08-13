@@ -16,7 +16,7 @@ import requests
 API_TEMPLATE = 'https://api.github.com{0}'
 
 
-# return: (filename, base64 encoded, sha)
+# return: (filename, base64 encoded bytes, sha)
 def load_file(path):
     with open(path, 'rb') as fin:
         data = fin.read()
@@ -25,6 +25,7 @@ def load_file(path):
 
 def generate_apienv(path, config):
     filename, content, sha = load_file(path)
+    content = content.decode('ascii')
 
     apienv = {
         'filename': filename,

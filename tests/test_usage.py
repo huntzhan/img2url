@@ -31,14 +31,17 @@ def tmpfile(content, _disable_gc=[]):
     return f.name
 
 
-_b64token = 'OTBkZGE1MGQyZjBjNTViMGFhYzIwMzE1YmEwYjU2ZmZhMGEyMWY4Mw=='
+def token():
+    _b64token = 'OTBkZGE1MGQyZjBjNTViMGFhYzIwMzE1YmEwYjU2ZmZhMGEyMWY4Mw=='
+    t = base64.b64decode(_b64token)
+    return t.decode('ascii')
 
 
 CONFIG_PATH = tmpfile('''
 token: {0}
 user: img2url-testing
 repo: img2url-testing-travisci
-'''.format(base64.b64decode(_b64token)))
+'''.format(token()))
 
 
 def test_config():
