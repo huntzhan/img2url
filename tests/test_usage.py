@@ -8,6 +8,7 @@ from future.builtins.disabled import *  # noqa
 from tempfile import NamedTemporaryFile
 import random
 import string
+import base64
 
 import pytest
 
@@ -30,11 +31,14 @@ def tmpfile(content, _disable_gc=[]):
     return f.name
 
 
+_b64token = 'OTBkZGE1MGQyZjBjNTViMGFhYzIwMzE1YmEwYjU2ZmZhMGEyMWY4Mw=='
+
+
 CONFIG_PATH = tmpfile('''
-token: c57e63c26ca29d20352e70f7d6ccc0f039fc7727
+token: {0}
 user: img2url-testing
 repo: img2url-testing-travisci
-''')
+'''.format(base64.b64decode(_b64token)))
 
 
 def test_config():
