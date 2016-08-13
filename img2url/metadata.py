@@ -5,7 +5,7 @@ from __future__ import (
 
 
 NAME = 'img2url'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 AUTHORS = [
     'huntzhan',
 ]

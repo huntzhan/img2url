@@ -66,7 +66,7 @@ def conditional_upload_file(path, config):
 
 def download_url(filename, config):
     URL = (
-        'https://github.com/{user}/{repo}/raw/master/{filename}'
+        'https://raw.githubusercontent.com/{user}/{repo}/master/{filename}'
     )
     return URL.format(filename=filename, **config)
 
