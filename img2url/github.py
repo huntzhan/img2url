@@ -16,11 +16,18 @@ import requests
 API_TEMPLATE = 'https://api.github.com{0}'
 
 
+# return: (filename, base64 encoded, sha)
+def load_file(path):
+    with open(path, 'rb') as fin:
+        data = fin.read()
+    return basename(path), base64.b64encode(data), gitsha(data)
+
+
 def generate_apienv(path, config):
-    content, sha = load_file(path)
+    filename, content, sha = load_file(path)
 
     apienv = {
-        'filename': basename(path),
+        'filename': filename,
         'sha': sha,
         'content': content,
         'time': str(datetime.now()),
@@ -52,13 +59,6 @@ def gitsha(data):
     for arg in [b'blob %u\0' % len(data), data]:
         m.update(arg)
     return m.hexdigest()
-
-
-# return: (base64 encoded, sha)
-def load_file(path):
-    with open(path, 'rb') as fin:
-        data = fin.read()
-    return base64.b64encode(data), gitsha(data)
 
 
 def assert_status_code(rep, code):

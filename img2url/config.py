@@ -59,6 +59,7 @@ DEFAULT_CONFIG = {
 
 def locate_config():
     config_path = os.environ.get(ENV_CONFIG_PATH, DEFAULT_CONFIG_PATH)
+    config_path = os.path.expanduser(config_path)
 
     if os.path.isfile(config_path):
         return config_path
