@@ -7,7 +7,7 @@ from future.builtins.disabled import *  # noqa
 
 import base64
 import hashlib
-from os.path import basename
+from os.path import basename, splitext
 from datetime import datetime
 from tempfile import NamedTemporaryFile
 
@@ -107,12 +107,21 @@ def _prepare_body(apienv, pre_sha):
     return body
 
 
+def default_rename_callback(filename, sha):
+    return filename
+
+
 # if pre_sha is None, create file.
 # otherwise, update file.
-def create_or_update_file(path, config, pre_sha=None, rename=None):
+def create_or_update_file(path, config,
+                          pre_sha=None,
+                          rename_callback=default_rename_callback):
+
     apienv = generate_apienv(path, config)
-    if rename:
-        apienv['filename'] = rename
+    apienv['filename'] = rename_callback(
+        apienv['filename'],
+        apienv['sha'],
+    )
 
     apiurl = API_TEMPLATE.format(
         '/repos/{user}/{repo}/contents/{path}{filename}'.format(**apienv),
@@ -132,15 +141,32 @@ def create_file(path, config):
 
 
 def update_file(path, config, pre_sha):
-    return create_or_update_file(path, config, pre_sha)
+
+    def attach_sha_to_filename(filename, sha):
+        base, ext = splitext(filename)
+        filename = '{0}-{1}{2}'.format(base, sha, ext)
+        return filename
+
+    return create_or_update_file(
+        path, config,
+        pre_sha=pre_sha,
+        rename_callback=attach_sha_to_filename,
+    )
 
 
 def create_empty_file(config):
+
+    def special_rename_callback(filename, sha):
+        return '.img2url'
+
     with NamedTemporaryFile() as tf:
         with open(tf.name, 'wb') as fout:
             fout.write(b'img2url created.')
 
-        create_or_update_file(tf.name, config, rename='.img2url')
+        create_or_update_file(
+            tf.name, config,
+            rename_callback=special_rename_callback,
+        )
 
 
 # return [(filename, sha), ...]

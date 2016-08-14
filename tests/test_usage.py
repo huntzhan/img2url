@@ -62,7 +62,7 @@ def test_create_and_update():
     assert create_file(path, config).status_code == 201
 
     _, _, sha = load_file(path)
-    assert update_file(path, config, pre_sha=sha).status_code == 200
+    assert update_file(path, config, pre_sha=sha).status_code == 201
 
 
 def test_branch():

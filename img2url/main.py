@@ -41,6 +41,10 @@ def get_doc_type(args):
 
 
 def conditional_upload_file(path, config):
+
+    def extract_filename(rep):
+        return rep.json()['content']['name']
+
     fname, _, sha = load_file(path)
 
     # load remote files.
@@ -56,12 +60,12 @@ def conditional_upload_file(path, config):
 
         # case 2, filename conflicts, treat it as update.
         if fname == remote_fname:
-            update_file(path, config, pre_sha=remote_sha)
-            return remote_fname
+            rep = update_file(path, config, pre_sha=remote_sha)
+            return extract_filename(rep)
 
     # case 3, file not exists.
-    create_file(path, config)
-    return fname
+    rep = create_file(path, config)
+    return extract_filename(rep)
 
 
 def download_url(filename, config):
