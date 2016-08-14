@@ -88,7 +88,7 @@ def list_repo(config):
     # https://developer.github.com/v3/repos/contents/#response-if-content-is-a-directory
 
     apiurl = API_TEMPLATE.format(
-        '/repos/{user}/{repo}/contents/'.format(**config),
+        '/repos/{user}/{repo}/contents/{path}'.format(**config),
     )
 
     rep = requests.get(apiurl, **requests_kwargs(config))
@@ -133,7 +133,7 @@ def create_or_update_file(path, config, pre_sha=None):
     apienv = generate_apienv(path, config)
 
     apiurl = API_TEMPLATE.format(
-        '/repos/{user}/{repo}/contents/{filename}'.format(**apienv),
+        '/repos/{user}/{repo}/contents/{path}{filename}'.format(**apienv),
     )
     body = _prepare_body(apienv, pre_sha)
 

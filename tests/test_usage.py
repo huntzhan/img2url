@@ -76,3 +76,16 @@ branch: branch-test
     config = load_and_check_config(CONFIG_PATH_WITH_BRANCH)
     path = tmpfile(random_str(10))
     assert create_file(path, config).status_code == 201
+
+
+def test_path():
+    CONFIG_PATH_WITH_PATH = tmpfile('''
+token: {0}
+user: img2url-testing
+repo: img2url-testing-travisci
+path: this-is/nested-path/
+'''.format(token()))
+
+    config = load_and_check_config(CONFIG_PATH_WITH_PATH)
+    path = tmpfile(random_str(10))
+    assert create_file(path, config).status_code == 201

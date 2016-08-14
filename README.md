@@ -70,7 +70,8 @@ Required fields:
 
 Optional fields:
 
-* `branch`: If not defined, use `master` as default branch.
+* `branch`: If not defined, use `master` as the default branch.
+* `path`: Path to store the uploaded files in your repository. If not defined, use the root of repository by default.
 * `proxies`: If defined, use proxy to make API requests instead of connecting directly.
 * `message_template_create`: Message template for creating new file, supported variables: `{filename}`, `sha`, `time`.
 * `message_template_update`: Message template for updating existed file, supported variables: `{filename}`, `sha`, `time`.

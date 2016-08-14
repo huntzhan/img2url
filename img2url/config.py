@@ -21,6 +21,7 @@ CONFIG_TOKEN = 'token'
 CONFIG_USER = 'user'
 CONFIG_REPO = 'repo'
 CONFIG_BRANCH = 'branch'
+CONFIG_PATH = 'path'
 
 # supported parameter.
 # * filename
@@ -53,6 +54,7 @@ DEFAULT_CONFIG = {
     # optional #
     ############
     CONFIG_BRANCH: 'master',
+    CONFIG_PATH: '',
 
     CONFIG_MESSAGE_TEMPLATE_CREATE: '{filename} created by img2url at {time}.',
     CONFIG_MESSAGE_TEMPLATE_UPDATE: '{filename} updated by img2url at {time}.',
@@ -94,6 +96,13 @@ def process_user_config(user_config):
             'FATAL: {0} is not defined!'.format(key) for key in missing
         )
         raise RuntimeError(message)
+
+    # postprocessing.
+    # 1. if path is empty, remain empty.
+    # 2. otherwise, path is ended with '/' but not starts with '/'.
+    config['path'] = config['path'].strip('/')
+    if config['path']:
+        config['path'] += '/'
 
     return config
 

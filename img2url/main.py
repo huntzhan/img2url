@@ -66,7 +66,7 @@ def conditional_upload_file(path, config):
 
 def download_url(filename, config):
     URL = (
-        'https://cdn.rawgit.com/{user}/{repo}/{branch}/{filename}'
+        'https://cdn.rawgit.com/{user}/{repo}/{branch}/{path}{filename}'
     )
     return URL.format(filename=filename, **config)
 
