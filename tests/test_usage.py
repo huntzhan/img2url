@@ -63,3 +63,16 @@ def test_create_and_update():
 
     _, _, sha = load_file(path)
     assert update_file(path, config, pre_sha=sha).status_code == 200
+
+
+def test_branch():
+    CONFIG_PATH_WITH_BRANCH = tmpfile('''
+token: {0}
+user: img2url-testing
+repo: img2url-testing-travisci
+branch: branch-test
+'''.format(token()))
+
+    config = load_and_check_config(CONFIG_PATH_WITH_BRANCH)
+    path = tmpfile(random_str(10))
+    assert create_file(path, config).status_code == 201

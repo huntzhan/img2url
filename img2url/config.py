@@ -20,6 +20,7 @@ DEFAULT_CONFIG_PATH = '~/.img2url.yml'
 CONFIG_TOKEN = 'token'
 CONFIG_USER = 'user'
 CONFIG_REPO = 'repo'
+CONFIG_BRANCH = 'branch'
 
 # supported parameter.
 # * filename
@@ -41,12 +42,18 @@ class _REQUIRED(object):
 
 
 DEFAULT_CONFIG = {
-    # required.
+    ############
+    # required #
+    ############
     CONFIG_TOKEN: _REQUIRED,
     CONFIG_USER: _REQUIRED,
     CONFIG_REPO: _REQUIRED,
 
-    # optional.
+    ############
+    # optional #
+    ############
+    CONFIG_BRANCH: 'master',
+
     CONFIG_MESSAGE_TEMPLATE_CREATE: '{filename} created by img2url at {time}.',
     CONFIG_MESSAGE_TEMPLATE_UPDATE: '{filename} updated by img2url at {time}.',
 

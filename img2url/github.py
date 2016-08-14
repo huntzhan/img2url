@@ -48,10 +48,17 @@ def proxies(config):
     return config['proxies']
 
 
+def params(config):
+    return {
+        'ref': config['branch'],
+    }
+
+
 def requests_kwargs(config):
     return {
         'headers': headers(config),
         'proxies': proxies(config),
+        'params': params(config),
     }
 
 
@@ -111,7 +118,9 @@ def _prepare_body(apienv, pre_sha):
             'name': apienv['commiter_name'],
             'email': apienv['commiter_email'],
         },
+        'branch': apienv['branch'],
     }
+
     if pre_sha:
         body['sha'] = pre_sha
 
