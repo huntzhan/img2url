@@ -37,10 +37,10 @@ drwxr-xr-x  8 haoxun  staff    272 Aug 13 21:23 ..
 -rw-r--r--@ 1 haoxun  staff   3727 Aug 13 21:26 image2.png
 
 $ img2url image1.png 
-https://raw.githubusercontent.com/img2url-testing/img2url-testing-travisci/master/image1.png
+https://cdn.rawgit.com/huntzhan/img2url-repo/master/image1.png
 
 $ img2url --markdown image2.png 
-![image2.png](https://raw.githubusercontent.com/img2url-testing/img2url-testing-travisci/master/image2.png)
+![image2.png](https://cdn.rawgit.com/huntzhan/img2url-repo/master/image2.png)
 ```
 
 ## Configuration
