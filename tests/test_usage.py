@@ -13,7 +13,7 @@ import base64
 import pytest
 
 from img2url.config import load_and_check_config
-from img2url.github import load_file, create_file, update_file
+from img2url.github import load_file, create_file, update_file, list_repo
 
 
 def random_str(n):
@@ -83,9 +83,13 @@ def test_path():
 token: {0}
 user: img2url-testing
 repo: img2url-testing-travisci
-path: this-is/nested-path/
-'''.format(token()))
+path: this-is/random-nested-path-{1}/
+'''.format(token(), random_str(10)))
 
     config = load_and_check_config(CONFIG_PATH_WITH_PATH)
+
+    # list an non-existed dir.
+    list_repo(config)
+
     path = tmpfile(random_str(10))
     assert create_file(path, config).status_code == 201

@@ -9,6 +9,7 @@ import base64
 import hashlib
 from os.path import basename
 from datetime import datetime
+from tempfile import NamedTemporaryFile
 
 import requests
 
@@ -83,27 +84,6 @@ def _to_binary(body):
         return data
 
 
-# return [(filename, sha), ...]
-def list_repo(config):
-    # https://developer.github.com/v3/repos/contents/#response-if-content-is-a-directory
-
-    apiurl = API_TEMPLATE.format(
-        '/repos/{user}/{repo}/contents/{path}'.format(**config),
-    )
-
-    rep = requests.get(apiurl, **requests_kwargs(config))
-    assert_status_code(rep, 200)
-
-    files = []
-    for element in rep.json():
-        if element['type'] != 'file':
-            continue
-        files.append(
-            (element['name'], element['sha']),
-        )
-    return files
-
-
 def _prepare_body(apienv, pre_sha):
 
     message_template = (
@@ -129,8 +109,10 @@ def _prepare_body(apienv, pre_sha):
 
 # if pre_sha is None, create file.
 # otherwise, update file.
-def create_or_update_file(path, config, pre_sha=None):
+def create_or_update_file(path, config, pre_sha=None, rename=None):
     apienv = generate_apienv(path, config)
+    if rename:
+        apienv['filename'] = rename
 
     apiurl = API_TEMPLATE.format(
         '/repos/{user}/{repo}/contents/{path}{filename}'.format(**apienv),
@@ -151,3 +133,40 @@ def create_file(path, config):
 
 def update_file(path, config, pre_sha):
     return create_or_update_file(path, config, pre_sha)
+
+
+def create_empty_file(config):
+    with NamedTemporaryFile() as tf:
+        with open(tf.name, 'wb') as fout:
+            fout.write(b'img2url created.')
+
+        create_or_update_file(tf.name, config, rename='.img2url')
+
+
+# return [(filename, sha), ...]
+def list_repo(config):
+    # https://developer.github.com/v3/repos/contents/#response-if-content-is-a-directory
+
+    apiurl = API_TEMPLATE.format(
+        '/repos/{user}/{repo}/contents/{path}'.format(**config),
+    )
+
+    rep = requests.get(apiurl, **requests_kwargs(config))
+
+    if rep.status_code == 404:
+        # if 'path' is defined, it's possible that the path is not exists.
+        # create a empty file to make the 'path' exist.
+        create_empty_file(config)
+        # then, reread again.
+        rep = requests.get(apiurl, **requests_kwargs(config))
+
+    assert_status_code(rep, 200)
+
+    files = []
+    for element in rep.json():
+        if element['type'] != 'file':
+            continue
+        files.append(
+            (element['name'], element['sha']),
+        )
+    return files
