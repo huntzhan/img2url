@@ -12,8 +12,10 @@ import base64
 
 import pytest
 
-from img2url.config import load_and_check_config
-from img2url.github import load_file, create_file, update_file, list_repo
+from img2url.config import load_config
+from img2url.remotes.github import (
+    GitHubConfig, GitHubOperation,
+)
 
 
 def random_str(n):
@@ -45,24 +47,24 @@ repo: img2url-testing-travisci
 
 
 def test_config():
-    load_and_check_config(CONFIG_PATH)
+    GitHubConfig(load_config(CONFIG_PATH))
 
     bad_path = tmpfile('''
 user: img2url-testing
 repo: img2url-testing-travisci
 ''')
     with pytest.raises(RuntimeError):
-        load_and_check_config(bad_path)
+        GitHubConfig(load_config(bad_path))
 
 
 def test_create_and_update():
-    config = load_and_check_config(CONFIG_PATH)
-
     path = tmpfile(random_str(10))
-    assert create_file(path, config).status_code == 201
 
-    _, _, sha = load_file(path)
-    assert update_file(path, config, pre_sha=sha).status_code == 201
+    config = GitHubConfig(load_config(CONFIG_PATH))
+    operator = GitHubOperation(config, path)
+
+    assert operator.create_file()
+    assert operator.update_file(old_fhash=operator.fhash)
 
 
 def test_branch():
@@ -73,9 +75,12 @@ repo: img2url-testing-travisci
 branch: branch-test
 '''.format(token()))
 
-    config = load_and_check_config(CONFIG_PATH_WITH_BRANCH)
     path = tmpfile(random_str(10))
-    assert create_file(path, config).status_code == 201
+
+    config = GitHubConfig(load_config(CONFIG_PATH_WITH_BRANCH))
+    operator = GitHubOperation(config, path)
+
+    assert operator.create_file()
 
 
 def test_path():
@@ -86,10 +91,10 @@ repo: img2url-testing-travisci
 path: this-is/random-nested-path-{1}/
 '''.format(token(), random_str(10)))
 
-    config = load_and_check_config(CONFIG_PATH_WITH_PATH)
+    path = tmpfile(random_str(10))
+
+    config = GitHubConfig(load_config(CONFIG_PATH_WITH_PATH))
+    operator = GitHubOperation(config, path)
 
     # list an non-existed dir.
-    list_repo(config)
-
-    path = tmpfile(random_str(10))
-    assert create_file(path, config).status_code == 201
+    assert operator.list_remote()

@@ -13,8 +13,44 @@ from tempfile import NamedTemporaryFile
 
 import requests
 
+from .base import REQUIRED_FIELD, Configuration, OperationPackage
+from ..metadata import AUTHORS, EMAILS
+
 
 API_TEMPLATE = 'https://api.github.com{0}'
+
+
+class GitHubConfig(Configuration):
+
+    FIELDS = [
+
+        ('token', REQUIRED_FIELD),
+        ('user', REQUIRED_FIELD),
+        ('repo', REQUIRED_FIELD),
+
+        ('branch', 'master'),
+        ('path', ''),
+        (
+            'message_template_create',
+            '{filename} created by img2url at {time}.',
+        ),
+        (
+            'message_template_update',
+            '{filename} updated by img2url at {time}.',
+        ),
+
+        ('commiter_name', AUTHORS[0]),
+        ('commiter_email', EMAILS[0]),
+
+        ('proxies', None),
+    ]
+
+    def postprocessing(self):
+        # 1. if path is empty, remain empty.
+        # 2. otherwise, path is ended with '/' but not starts with '/'.
+        self.field['path'] = self.field['path'].strip('/')
+        if self.field['path']:
+            self.field['path'] += '/'
 
 
 # return: (filename, base64 encoded bytes, sha)
@@ -196,3 +232,30 @@ def list_repo(config):
             (element['name'], element['sha']),
         )
     return files
+
+
+def extract_filename(rep):
+    return rep.json()['content']['name']
+
+
+class GitHubOperation(OperationPackage):
+
+    def generate_file_hash(self, data):
+        return gitsha(data)
+
+    def list_remote(self):
+        return list_repo(self.config.fields)
+
+    def create_file(self):
+        rep = create_file(self.fpath, self.config.fields)
+        return extract_filename(rep)
+
+    def update_file(self, old_fhash):
+        rep = update_file(self.fpath, self.config.fields, old_fhash)
+        return extract_filename(rep)
+
+    def resource_url(self, fname, hash_tag):
+        URL = (
+            'https://cdn.rawgit.com/{user}/{repo}/{branch}/{path}{filename}'
+        )
+        return URL.format(filename=fname, **self.config.fields)
