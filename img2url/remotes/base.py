@@ -68,6 +68,9 @@ class OperationPackage(object):
         self._setup_file(fpath)
         self.init()
 
+    def get_config(self, key):
+        return self.config.fields.get(key, None)
+
     # fpath: ab
     def _setup_file(self, fpath):
         fpath = expanduser(fpath)
@@ -75,12 +78,13 @@ class OperationPackage(object):
             # TODO(huntzhan): enhance logging.
             raise RuntimeError('FATAL: {0} not exists'.format(fpath))
 
-        # fpath:     abspath of file.
-        # fname:     filename of file.
-        # fbasename: filename without ext.
-        # fext:      ext of file.
-        # fdata:     binary data of file.
-        # fhash:     hash value of file, defined by user.
+        # fpath:           abspath of file.
+        # fname:           filename of file.
+        # fbasename:       filename without ext.
+        # fext:            ext of file.
+        # fdata:           binary data of file.
+        # fhash:           hash value of file, defined by user.
+        # fname_with_hash: fname + '-' + fhash + fext
         self.fpath = fpath
         self.fname = basename(fpath)
         self.fbasename, self.ext = splitext(self.fname)
@@ -88,6 +92,11 @@ class OperationPackage(object):
         with open(fpath, 'rb') as fin:
             self.fdata = fin.read()
         self.fhash = self.generate_file_hash(self.fdata)
+
+        # mainly for update.
+        self.fname_with_hash = '{0}[{1}]{2}'.format(
+            self.fbasename, self.fhash, self.ext,
+        )
 
     #############################################
     # subclass may override following methods.  #

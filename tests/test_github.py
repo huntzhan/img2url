@@ -40,9 +40,9 @@ def token():
 
 
 CONFIG_PATH = tmpfile('''
-token: {0}
-user: img2url-testing
-repo: img2url-testing-travisci
+github_token: {0}
+github_user: img2url-testing
+github_repo: img2url-testing-travisci
 '''.format(token()))
 
 
@@ -50,8 +50,8 @@ def test_config():
     GitHubConfig(load_config(CONFIG_PATH))
 
     bad_path = tmpfile('''
-user: img2url-testing
-repo: img2url-testing-travisci
+github_user: img2url-testing
+github_repo: img2url-testing-travisci
 ''')
     with pytest.raises(RuntimeError):
         GitHubConfig(load_config(bad_path))
@@ -69,10 +69,10 @@ def test_create_and_update():
 
 def test_branch():
     CONFIG_PATH_WITH_BRANCH = tmpfile('''
-token: {0}
-user: img2url-testing
-repo: img2url-testing-travisci
-branch: branch-test
+github_token: {0}
+github_user: img2url-testing
+github_repo: img2url-testing-travisci
+github_branch: branch-test
 '''.format(token()))
 
     path = tmpfile(random_str(10))
@@ -85,10 +85,10 @@ branch: branch-test
 
 def test_path():
     CONFIG_PATH_WITH_PATH = tmpfile('''
-token: {0}
-user: img2url-testing
-repo: img2url-testing-travisci
-path: this-is/random-nested-path-{1}/
+github_token: {0}
+github_user: img2url-testing
+github_repo: img2url-testing-travisci
+github_path: this-is/random-nested-path-{1}/
 '''.format(token(), random_str(10)))
 
     path = tmpfile(random_str(10))

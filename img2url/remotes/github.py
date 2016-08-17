@@ -24,12 +24,16 @@ class GitHubConfig(Configuration):
 
     FIELDS = [
 
-        ('token', REQUIRED_FIELD),
-        ('user', REQUIRED_FIELD),
-        ('repo', REQUIRED_FIELD),
+        ('github_token', REQUIRED_FIELD),
+        ('github_user', REQUIRED_FIELD),
+        ('github_repo', REQUIRED_FIELD),
 
-        ('branch', 'master'),
-        ('path', ''),
+        ('github_branch', 'master'),
+        ('github_path', ''),
+
+        ('github_commiter_name', AUTHORS[0]),
+        ('github_commiter_email', EMAILS[0]),
+
         (
             'message_template_create',
             '{filename} created by img2url at {time}.',
@@ -38,19 +42,22 @@ class GitHubConfig(Configuration):
             'message_template_update',
             '{filename} updated by img2url at {time}.',
         ),
-
-        ('commiter_name', AUTHORS[0]),
-        ('commiter_email', EMAILS[0]),
-
         ('proxies', None),
     ]
 
-    def postprocessing(self):
+    def postprocess_fields(self):
+        # TODO(huntzhan): fix that later.
+        # fix compatible issue.
+        for key, value in list(self.fields.items()):
+            if key.startswith('github_'):
+                key = key[7:]
+                self.fields[key] = value
+
         # 1. if path is empty, remain empty.
         # 2. otherwise, path is ended with '/' but not starts with '/'.
-        self.field['path'] = self.field['path'].strip('/')
-        if self.field['path']:
-            self.field['path'] += '/'
+        self.fields['path'] = self.fields['path'].strip('/')
+        if self.fields['path']:
+            self.fields['path'] += '/'
 
 
 # return: (filename, base64 encoded bytes, sha)
