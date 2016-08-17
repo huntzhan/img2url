@@ -26,7 +26,7 @@ def random_str(n):
 
 
 def tmpfile(content, _disable_gc=[]):
-    f = NamedTemporaryFile()
+    f = NamedTemporaryFile(prefix='tmp-img2url-'+random_str(10))
     _disable_gc.append(f)
     with open(f.name, 'w', encoding='utf-8') as _f:
         _f.write(content)
