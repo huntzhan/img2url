@@ -6,22 +6,22 @@ from builtins import *                  # noqa
 from future.builtins.disabled import *  # noqa
 
 from docopt import docopt
+import pyperclip
 
 from img2url.metadata import VERSION
-
 from img2url.config import locate_config, load_config
-
 from img2url.remotes.github import GitHubConfig, GitHubOperation
 from img2url.remotes.qiniu import QiniuConfig, QiniuOperation
 
 
 DOC = '''
 Usage:
-    img2url <path>
-    img2url (-m | --markdown) <path>
+    img2url [--no-clipboard] <path>
+    img2url [--no-clipboard] (-m | --markdown) <path>
 
 Options:
-    -m, --markdown
+    --no-clipboard  Prevent copying result to clipboard.
+    -m, --markdown  Return Markdown format of image url.
 '''
 
 CONFIG_REMOTE = 'remote'
@@ -104,4 +104,8 @@ def entry_point():
         resource_url,
         doc_type,
     )
+
+    if not args['--no-clipboard']:
+        pyperclip.copy(url)
+
     print(url)

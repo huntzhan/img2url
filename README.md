@@ -24,11 +24,12 @@ And the CLI is pretty simple:
 ```
 $ img2url --help 
 Usage:
-    img2url <path>
-    img2url (-m | --markdown) <path>
+    img2url [--no-clipboard] <path>
+    img2url [--no-clipboard] (-m | --markdown) <path>
 
 Options:
-    -m, --markdown
+    --no-clipboard  Prevent copying result to clipboard.
+    -m, --markdown  Return Markdown format of image url.
 ```
 
 Example:
