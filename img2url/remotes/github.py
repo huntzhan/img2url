@@ -263,6 +263,6 @@ class GitHubOperation(OperationPackage):
 
     def resource_url(self, fname, hash_tag):
         URL = (
-            'https://cdn.rawgit.com/{user}/{repo}/{branch}/{path}{filename}'
+            'https://raw.githubusercontent.com/{user}/{repo}/{branch}/{path}{filename}'
         )
         return URL.format(filename=fname, **self.config.fields)
